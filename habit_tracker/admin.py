@@ -1,5 +1,4 @@
 from django.contrib import admin
-
 from habit_tracker.models import Habit
 
 

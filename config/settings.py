@@ -11,7 +11,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = os.getenv("SECRET_KEY")
 
-DEBUG = True if os.getenv('DEBUG') == 'True' else False
+DEBUG = True if os.getenv("DEBUG") == "True" else False
 
 ALLOWED_HOSTS = ["*"]
 
@@ -22,16 +22,15 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-
     "habit_tracker",
     "users",
-
     "rest_framework",
     "rest_framework_simplejwt",
     "django_celery_beat",
     "django_filters",
     "corsheaders",
     "drf_yasg",
+    "multiselectfield",
 ]
 
 MIDDLEWARE = [
@@ -113,12 +112,14 @@ AUTH_USER_MODEL = "users.User"
 REST_FRAMEWORK = {
     "DEFAULT_FILTER_BACKENDS": ["django_filters.rest_framework.DjangoFilterBackend"],
     "DEFAULT_AUTHENTICATION_CLASSES": ("rest_framework_simplejwt.authentication.JWTAuthentication",),
-    "DEFAULT_PERMISSION_CLASSES": ["rest_framework.permissions.IsAuthenticated",],
+    "DEFAULT_PERMISSION_CLASSES": [
+        "rest_framework.permissions.IsAuthenticated",
+    ],
 }
 
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=15),
-    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=15),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
 }
 
 # Настройки CORS (доступ к данным на разных доменах)
@@ -127,15 +128,15 @@ CORS_ALLOWED_ORIGINS = [
 ]
 
 CSRF_TRUSTED_ORIGINS = [
-    os.getenv("CORS_ALLOWED_ORIGINS"),    # Замените на адрес вашего фронтенд-сервера
-    os.getenv("CSRF_TRUSTED_ORIGINS"),    # и добавьте адрес бэкенд-сервера
+    os.getenv("CORS_ALLOWED_ORIGINS"),  # Замените на адрес вашего фронтенд-сервера
+    os.getenv("CSRF_TRUSTED_ORIGINS"),  # и добавьте адрес бэкенд-сервера
 ]
 
 CORS_ALLOW_ALL_ORIGINS = False
 
 # Настройки для Celery
 # URL-адрес брокера сообщений
-CELERY_BROKER_URL = os.getenv("CELERY_BROKER_URL")    # Например, Redis, который по умолчанию работает на порту 6379
+CELERY_BROKER_URL = os.getenv("CELERY_BROKER_URL")  # Например, Redis, который по умолчанию работает на порту 6379
 
 # URL-адрес брокера результатов, также Redis
 CELERY_RESULT_BACKEND = os.getenv("CELERY_RESULT_BACKEND")
@@ -150,15 +151,20 @@ CELERY_TASK_TRACK_STARTED = True
 CELERY_TASK_TIME_LIMIT = 30 * 60
 
 CELERY_BEAT_SCHEDULE = {
-    'check_update': {
-        'task': 'habit_tracker.tasks.check_update',  # Путь к задаче
-        'schedule': crontab(hour=21, minute=00),  # Расписание выполнения задачи (например, каждые 10 минут)
+    "check_done": {
+        "task": "habit_tracker.tasks.check_done",  # Путь к задаче
+        "schedule": crontab(hour=00, minute=00),  # Расписание выполнения задачи (например, каждые 10 минут)
     },
-    'check_time': {
-        'task': 'habit_tracker.tasks.check_time',  # Путь к задаче
-        'schedule': timedelta(minutes=1),  # Расписание выполнения задачи (например, каждые 10 минут)
+    "check_update": {
+        "task": "habit_tracker.tasks.check_update",  # Путь к задаче
+        "schedule": crontab(hour=21, minute=00),  # Расписание выполнения задачи (например, каждые 10 минут)
+    },
+    "check_time": {
+        "task": "habit_tracker.tasks.check_time",  # Путь к задаче
+        "schedule": timedelta(minutes=1),  # Расписание выполнения задачи (например, каждые 10 минут)
     },
 }
 
 TELEGRAM_URL = "https://api.telegram.org/bot"
 TELEGRAM_TOKEN = os.getenv("TELEGRAM_TOKEN")
+TELEGRAM_ID = os.getenv("TELEGRAM_ID")

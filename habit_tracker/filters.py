@@ -1,17 +1,10 @@
 from rest_framework.filters import BaseFilterBackend
 
 
-class IsOwnerFilterBackend(BaseFilterBackend):
-    """
-    Filter that only allows users to see their own objects.
-    """
-    def filter_queryset(self, request, queryset, view):
-        return queryset.filter(owner=request.user)
-
-
 class IsPublicFilterBackend(BaseFilterBackend):
     """
-    Filter that allows users to see their own objects as well as public objects.
+    Позволяет пользователям видеть свои привычки и привычки, опубликованные в общий доступ.
     """
+
     def filter_queryset(self, request, queryset, view):
-        return queryset.filter(is_public=True).union(queryset.filter(owner=request.user))
+        return queryset.filter(is_public=True) | queryset.filter(owner=request.user)
