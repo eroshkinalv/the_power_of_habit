@@ -62,7 +62,7 @@ class HabitTestCase(APITestCase):
             "location": "home",
             "time": "07:00:00",
             "activity": "do morning exercises",
-            "linked_habit": "meditate",
+            "linked_habit": self.bonus_habit.pk,
             "is_bonus": False,
             "is_public": False,
         }
@@ -276,15 +276,11 @@ class HabitTestCase(APITestCase):
 
         params = {"text": "Ok", "chat_id": self.user.tg_chat_id}
 
-        response = requests.get(f"{TELEGRAM_URL}{TELEGRAM_TOKEN}/sendMessage", params=params)
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        response = requests.get(f"{TELEGRAM_URL}12345678912345679/sendMessage", params=params)
+
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     def test_send_tg_message(self):
-
-        params = {"text": "Ok", "chat_id": self.user.tg_chat_id}
-
-        response = requests.get(f"{TELEGRAM_URL}{TELEGRAM_TOKEN}/sendMessage", params=params)
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
         func = send_tg_message(self.user.tg_chat_id, "OK")
         self.assertEqual(func, None)

@@ -37,8 +37,8 @@ class Habit(models.Model):
         help_text="Привычка, которую можно привязать к выполнению полезной привычки",
     )
     # linked_habit - важно указывать для полезных привычек, но не для приятных.
-    linked_habit = models.CharField(
-        max_length=200,
+    linked_habit = models.ForeignKey(
+        "habit_tracker.Habit", on_delete=models.CASCADE,
         verbose_name="Связанная привычка",
         blank=True,
         null=True,

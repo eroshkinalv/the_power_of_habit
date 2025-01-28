@@ -34,6 +34,9 @@ class HabitSerializer(ModelSerializer):
                         "Можно заполнить только одно из двух полей."
                     )
         else:
+            if linked_habit:
+                raise ValidationError("Связанная привычка не указывается для приятных привычек.")
+
             if reward:
                 raise ValidationError("Вознаграждение не указывается для приятных привычек.")
 
