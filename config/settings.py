@@ -143,6 +143,8 @@ CELERY_BROKER_URL = os.getenv("CELERY_BROKER_URL")  # Например, Redis, �
 # URL-адрес брокера результатов, также Redis
 CELERY_RESULT_BACKEND = os.getenv("CELERY_RESULT_BACKEND")
 
+CELERY_BROKER_CONNECTION_RETRY_ON_STARTUP = True
+
 # Часовой пояс для работы Celery
 CELERY_TIMEZONE = "Europe/Moscow"
 

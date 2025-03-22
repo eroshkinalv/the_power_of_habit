@@ -6,7 +6,7 @@ from rest_framework import status
 from rest_framework.exceptions import ValidationError
 from rest_framework.test import APITestCase
 
-from config.settings import TELEGRAM_URL, TELEGRAM_TOKEN
+from config.settings import TELEGRAM_URL
 from habit_tracker.models import Habit, DayChoices
 from habit_tracker.services import send_tg_message
 from habit_tracker.tasks import check_done, check_update, check_time
