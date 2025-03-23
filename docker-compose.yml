@@ -61,6 +61,7 @@ services:
       - redis
       - db
       - web
+      - celery
     volumes:
       - app_code:/app
     env_file:
@@ -76,6 +77,33 @@ services:
     depends_on:
       - web
 
+  django:
+    # Сборка образа для сервиса django из текущей директории
+    build: .
+    # Задание имени контейнера для сервиса django
+    container_name: django
+    # Задание команды, которую нужно запустить при запуске контейнера для сервиса django
+    command: python manage.py runserver 127.0.0.1:8002
+    volumes:
+      - .:/usr/src/app
+    # Открытие порта на хостовой машине и перенаправление на порт в контейнере
+    ports:
+      - "8002:8002"
+    # Зависимость от другого сервиса
+    depends_on:
+      - db
+    environment:
+      DJANGO_SECRET_KEY: ${SECRET_KEY}
+      DEBUG: ${DEBUG}
+
+      DATABASE_NAME: ${POSTGRES_DB}
+      DATABASE_USERNAME: ${POSTGRES_USER}
+      DATABASE_PASSWORD: ${POSTGRES_PASSWORD}
+      DATABASE_HOST: ${HOST}
+      DATABASE_PORT: ${PORT}
+
+    env_file:
+        - .env
 
 volumes:
   postgres_data:
