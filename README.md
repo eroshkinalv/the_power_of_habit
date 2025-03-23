@@ -37,6 +37,18 @@ gh repo clone eroshkinalv/the_power_of_habit
 ```
 pip install -r requirements.txt
 ```
+3. Настройте переменные окружения [(файл .env)](.env_sample)
+
+4. Запустите Docker:
+```
+docker compose up --build
+```
+5. Проверьте работоспособность сервисов (web, db, redis, celery, celery beat):
+```
+docker ps
+```
+## Для запуска приложения:
+[перейдите по ссылке](http://158.160.167.222/).
 
 ## Документация:
 
