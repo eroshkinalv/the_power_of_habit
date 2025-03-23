@@ -38,7 +38,7 @@ class Habit(models.Model):
     )
     # linked_habit - важно указывать для полезных привычек, но не для приятных.
     linked_habit = models.ForeignKey(
-        "habit_tracker.Habit", on_delete=models.CASCADE,
+        "self", on_delete=models.CASCADE,
         verbose_name="Связанная привычка",
         blank=True,
         null=True,

@@ -1,4 +1,5 @@
 import os
+import sys
 from datetime import timedelta
 from pathlib import Path
 
@@ -67,9 +68,9 @@ WSGI_APPLICATION = "config.wsgi.application"
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql_psycopg2",
-        "NAME": os.getenv("NAME"),
-        "USER": os.getenv("USER"),
-        "PASSWORD": os.getenv("PASSWORD"),
+        "NAME": os.getenv("POSTGRES_DB"),
+        "USER": os.getenv("POSTGRES_USER"),
+        "PASSWORD": os.getenv("POSTGRES_PASSWORD"),
         "HOST": os.getenv("HOST"),
         "PORT": os.getenv("PORT"),
     }
@@ -100,6 +101,7 @@ USE_TZ = True
 
 STATIC_URL = "static/"
 STATICFILES_DIRS = (BASE_DIR / "static",)
+STATIC_ROOT = BASE_DIR / "staticfiles"
 
 MEDIA_URL = "/media/"
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")
@@ -120,6 +122,7 @@ REST_FRAMEWORK = {
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(minutes=15),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
+    "UPDATE_LAST_LOGIN": True,
 }
 
 # Настройки CORS (доступ к данным на разных доменах)
@@ -140,6 +143,8 @@ CELERY_BROKER_URL = os.getenv("CELERY_BROKER_URL")  # Например, Redis, �
 
 # URL-адрес брокера результатов, также Redis
 CELERY_RESULT_BACKEND = os.getenv("CELERY_RESULT_BACKEND")
+
+CELERY_BROKER_CONNECTION_RETRY_ON_STARTUP = True
 
 # Часовой пояс для работы Celery
 CELERY_TIMEZONE = "Europe/Moscow"
@@ -165,6 +170,24 @@ CELERY_BEAT_SCHEDULE = {
     },
 }
 
+CACHE_ENABLED = True if os.getenv('CACHE_ENABLED') == 'True' else False
+
+if CACHE_ENABLED:
+    CACHES = {
+        'default': {
+            'BACKEND': 'django.core.cache.backends.redis.RedisCache',
+            'LOCATION': 'redis://redis:6379/1',
+        }
+    }
+
 TELEGRAM_URL = "https://api.telegram.org/bot"
 TELEGRAM_TOKEN = os.getenv("TELEGRAM_TOKEN")
 TELEGRAM_ID = os.getenv("TELEGRAM_ID")
+
+if 'test' in sys.argv:
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.sqlite3",
+            "NAME": BASE_DIR / "test_db.sqlite3",
+        }
+    }
