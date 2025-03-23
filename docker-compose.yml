@@ -27,7 +27,7 @@ services:
 
   web:
     build: .
-    command: sh -c "python manage.py collectstatic --noinput && gunicorn config.wsgi:application --bind 0.0.0.0:8000"
+    command: sh -c "python manage.py migrate && python manage.py collectstatic --noinput && gunicorn config.wsgi:application --bind 0.0.0.0:8000"
     volumes:
       - app_code:/app
       - static_volume:/app/staticfiles
@@ -78,18 +78,13 @@ services:
       - web
 
   django:
-    # Сборка образа для сервиса django из текущей директории
     build: .
-    # Задание имени контейнера для сервиса django
     container_name: django
-    # Задание команды, которую нужно запустить при запуске контейнера для сервиса django
     command: python manage.py runserver 127.0.0.1:8002
     volumes:
       - .:/usr/src/app
-    # Открытие порта на хостовой машине и перенаправление на порт в контейнере
     ports:
       - "8002:8002"
-    # Зависимость от другого сервиса
     depends_on:
       - db
     environment:
@@ -109,3 +104,79 @@ volumes:
   postgres_data:
   static_volume:
   app_code:
+
+
+#services:
+#  web:
+#    build:
+#      context: .
+#      dockerfile: Dockerfile
+#    container_name: django_app
+#    command: >
+#      sh -c "python manage.py migrate &&
+#             python manage.py collectstatic --noinput && gunicorn conf.wsgi:application --bind 0.0.0.0:8000"
+#    expose:
+#      - "8000"
+#    env_file:
+#      - .env
+#    volumes:
+#      - .:/app
+#      - static_volume:/app/staticfiles
+#    depends_on:
+#      - db
+#      - redis
+#  nginx:
+#      build: ./nginx
+#      ports:
+#        - "8001:80"
+#      volumes:
+#        - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+#        - static_volume:/app/staticfiles
+#      depends_on:
+#        - web
+#
+#  celery:
+#    build:
+#      context: .
+#      dockerfile: Dockerfile
+#    command: >
+#      sh -c "celery -A config worker --loglevel=info"
+#    env_file:
+#      - .env
+#    volumes:
+#      - .:/app
+#    depends_on:
+#      - redis
+#
+#  celery_beat:
+#    build:
+#      context: .
+#      dockerfile: Dockerfile
+#    container_name: celery_beat
+#    command: >
+#      sh -c "celery -A config beat --loglevel=info"
+#    env_file:
+#      - .env
+#    volumes:
+#      - .:/app
+#    depends_on:
+#      - redis
+#
+#  db:
+#    image: postgres:16
+#    container_name: postgres_db
+#    env_file:
+#      - ./.env
+#    volumes:
+#      - postgres_data:/var/lib/postgresql/data
+#
+#  redis:
+#      image: redis:latest
+#      restart: on-failure
+#      expose:
+#        - "6379"
+#
+#
+#volumes:
+#  postgres_data:
+#  static_volume:
